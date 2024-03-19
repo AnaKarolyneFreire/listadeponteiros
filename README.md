@@ -1,4 +1,4 @@
 # listadeponteiros
-- Ana
-- pÂMELA
+- Ana Karolyne
+- Pâmela Marcela 
 - 

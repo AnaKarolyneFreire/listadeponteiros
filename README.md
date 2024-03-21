@@ -1,3 +1,3 @@
 # listadeponteiros
-- Ana Karolyne 
-- Pâmela Marcela 
+ Ana Karolyne 
+ Pâmela Marcela 

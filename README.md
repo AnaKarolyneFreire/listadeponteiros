@@ -5,6 +5,7 @@ Nome: Ana Karolyne e Pâmela Marcela
 Matrícula: 20230087566 e 20230079232
 
 Questão 1: 
+
 #include <stdio.h>
 
 int main() {

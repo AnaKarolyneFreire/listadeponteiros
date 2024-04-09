@@ -290,4 +290,211 @@ Questão 10:
 
 2. '++(*x)': Esta linha tenta incrementar o valor apontado por 'x', mas como `x` é um ponteiro para uma constante, isso resulta em um comportamento indefinido. O compilador pode emitir um aviso ou erro, mas isso não é garantido. Em geral, tentar modificar o valor de uma constante resulta em comportamento indefinido.
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Questão 12:
+
+Para resumir:
+             Os válidos são: 1, 4, 5, 8.
+             Os inválidos são: 2, 3, 6, 7. 
+
+1. aloha[2] = value; - É válido. Ele simplesmente atribui o valor da variável `value` ao array `aloha` com a posição 3.  
+
+2. scanf("%f", &aloha); - Inválido. Ao invés disso, Você precisa fornecer o endereço do primeiro elemento do array, que seria `&aloha[0]` , ou seja, `scanf("%f", &aloha[0]);`. A função `scanf` espera um ponteiro para float, mas o array `aloha` não é um ponteiro para float, é um array de floats.  
+
+3. aloha = "value"; - Inválido. Você não pode atribuir uma string diretamente a um array de floats.
+
+4. printf("%f", aloha); - Inválido. Você está tentando imprimir todo o array `aloha` como um float, o que não é possível diretamente. Você pode imprimir os elementos do array usando um loop.
+
+5. coisas[4][4] = aloha[3]; - Válido. Atribui o valor do quarto elemento do array `aloha` ao elemento na quarta linha e quinta coluna do array bidimensional `coisas`.
+
+6. coisas[5] = aloha; - Inválido. Você está tentando atribuir um array unidimensional ( aloha)  a uma linha de um array bidimensional (coisas). Isso não é permitido em C.
+
+7. pf = value; -  Você está tentando atribuir um float a um ponteiro para float, que é o 'pf'. Para fazer isso, você deve primeiro obter o endereço da variável `value`, usando o operador de referência '&'. Portanto, inválido. 
+
+8. pf = aloha; - Atribuir `aloha` a `pf` é válido. Um ponteiro para float pode apontar para o primeiro elemento de um array de floats.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Questão 13: 
+
+Um vazamento de memória (do Inglês memory leak) ocorre quando o programa não libera para o sistema operacional memória que não é mais utilizada. Um problema que surge diretamente do gerenciamento incorreto da alocação dinâmica.
+Como resultado, a memória alocada permanece reservada mesmo após o término da execução do programa, o que pode levar a um esgotamento gradual dos recursos do sistema.
+
+
+	Abaixo estão três exemplos de programas em C que apresentam memory leaks:
+
+
+1. O código abaixo, através da função 'to_italic' , recebe uma string e retorna ela com dois '*', no início e no fim dela.
+Ao ser executado, o programa deve imprimir o seguinte:
+
+**Hello, there!**
+**Memory leak**
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *to_italic(char *s) {
+    size_t len = strlen(s);
+    char *result = malloc(len + 5); // assume que malloc não falhará
+    sprintf(result, "**%s**", s);
+    return result;
+}
+int main() {
+    puts(to_italic("Hello, there!"));
+    puts(to_italic("Memory leak"));
+}
+
+Perceba que em nenhum momento foi usado um ponteiro para acessar a região da memória que contém a string retornada pela função to_italic; a string foi passada diretamente para a função puts. Dessa forma, não é possível usar o free para liberar essa memória. Toda vez que a função to_italic for usada de forma similar a essa, a memória será perdida.
+
+2. **Memory Leak em Função que Retorna um Ponteiro Alocado Dinamicamente:**
+
+#include <stdlib.h>
+int *allocate_memory() {
+    int *ptr = (int *)malloc(sizeof(int));
+    return ptr;
+}
+int main() {
+    int *result = allocate_memory();
+    // O ponteiro 'result' recebe a memória alocada dinamicamente,
+    // mas nunca é liberado.
+    return 0;
+}
+
+Neste exemplo, a função `allocate_memory()` aloca dinamicamente memória e retorna um ponteiro para ela. Mas, o ponteiro retornado nunca é liberado em `main()`, resultando em um memory leak.
+
+
+3. **Memory Leak em Função que Perde a Referência para Memória Alocada:**
+
+#include <stdlib.h>
+void allocate_and_forget() {
+    int *ptr = (int *)malloc(sizeof(int));
+    // Nenhuma referência ao ponteiro 'ptr' é mantida após o término desta função,
+    // então a memória alocada é perdida e não pode ser liberada.
+}
+int main() {
+    allocate_and_forget();
+    // A memória alocada dentro de 'allocate_and_forget()' é perdida e não pode ser liberada.
+    return 0;
+}
+Neste exemplo, a função `allocate_and_forget()` aloca dinamicamente memória, mas não mantém nenhuma referência ao ponteiro alocado após o término da função. Como resultado, a memória alocada é perdida e não pode ser liberada, resultando em um memory leak.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Questão 19: 
+
+#include <stdio.h>
+
+void soma_vetores(int vet1[], int vet2[], int resultado[], int tamanho) {
+    for (int i = 0; i < tamanho; i++) {
+        resultado[i] = vet1[i] + vet2[i];
+    }
+}
+int main() {
+    int tamanho;
+    
+    printf("Digite o tamanho dos vetores: ");
+    scanf("%d", &tamanho);
+    
+    int vet1[tamanho], vet2[tamanho], resultado[tamanho];
+    
+    printf("Digite os elementos do primeiro vetor: ");
+    for (int i = 0; i < tamanho; i++) {
+        scanf("%d", &vet1[i]);
+    }
+    printf("Digite os elementos do segundo vetor: ");
+    for (int i = 0; i < tamanho; i++) {
+        scanf("%d", &vet2[i]);
+    }
+    soma_vetores(vet1, vet2, resultado, tamanho);
+    printf("Vetor de soma: ");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", resultado[i]);
+    }
+    printf("\n");
+    return 0;
+}
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Questão 20: 
+
+#include <stdio.h>
+
+void multiplica_matrizes(int *A, int *B, int *C, int linhas_A, int colunas_A, int colunas_B) {
+    for (int i = 0; i < linhas_A; i++) {
+        for (int j = 0; j < colunas_B; j++) {
+            C[i * colunas_B + j] = 0; // Inicializa o elemento (i, j) de C com zero
+            for (int k = 0; k < colunas_A; k++) {
+                C[i * colunas_B + j] += A[i * colunas_A + k] * B[k * colunas_B + j]; // Realiza a multiplicação e acumula o resultado
+            }
+        }
+    }
+}
+
+void imprime_matriz(int *matriz, int linhas, int colunas) {
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            printf("%d ", matriz[i * colunas + j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int linhas_A = 2, colunas_A = 3, colunas_B = 4;
+    
+    int A[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    int B[3][4] = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}};
+    int C[2][4];
+    
+    multiplica_matrizes((int *)A, (int *)B, (int *)C, linhas_A, colunas_A, colunas_B);
+    
+    printf("Matriz A:\n");
+    imprime_matriz((int *)A, linhas_A, colunas_A);
+    
+    printf("\nMatriz B:\n");
+    imprime_matriz((int *)B, colunas_A, colunas_B);
+    
+    printf("\nMatriz C (resultado da multiplicação AxB):\n");
+    imprime_matriz((int *)C, linhas_A, colunas_B);
+    
+    return 0;
+}
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Questão 21: 
+
+Letra E.
+
+ void f(int n){
+  char *m = malloc(10);
+  char *n = malloc(10);
+  free(m);
+  m = n;
+  free(m);
+  free(n);
+}
+
+Por que?
+Porque a memória alocada para m (linha 4) é liberada antes da mesma ser atribída à n. O código dá erro pois qunado se iguala m e n ( linha 5) ,ambos apontam para a mesma posição de memória. 
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Questão 22: 
+
+Analisando o código, podemos perceber que, inicialmente, x recebe o valor de a
+                                                         y recebe o valor de b
+                                                         z recebe a soma de a e b.
+while (a) é um loop while que continuará executando enquanto o valor de `a` for diferente de zero.
+
+x = x | b; - Atribui o resultado a x quando o operador `|` realiza uma operação OR bit a bit entre `x` e `b`.
+y = y ^ a; -Atribui o resultado a y, quando o operador `^` realiza uma operação XOR bit a bit entre `y` e `a`. 
+z = z & (a+b); O operador `&` realiza uma operação AND bit a bit entre `z` e `(a+b)`, e atribui o resultado a z.
+a = a >> 1; A operação `>>` desloca todos os bits de `a` uma posição para a direita (equivale a uma divisão por 2).
+b = b << 1; A operação `<<` desloca todos os bits de `b` uma posição para a esquerda (equivale a uma multiplicação por 2).
+
+Então, após executar o loop explicado acima, com `a` começando com o valor 10 e `b` com o valor 1:
+após a 4º iteração no loop, 'a' se torna 0, e só então a saída dp programa vai ser igual a '14 7 0', ou seja, valores de x, y e z respectivamente. 
